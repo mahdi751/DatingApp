@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { AccountService } from './_services/account.service';
+import { User } from './_models/user';
 
 @Component({
   selector: 'app-root',
@@ -9,16 +10,19 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
 
   title: string = 'Dating App';
-  users: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private accountService: AccountService) {}
 
   ngOnInit(): void {
-    this.http.get('https://localhost:5001/api/Users').subscribe({
-      next: data => this.users = data,
-      error: error => console.log(error),
-      complete : () => console.log('Request has completed')
-    });
+    this.setCurrentUser();
+  }
+
+  setCurrentUser(){
+    // const user : User = JSON.parse(localStorage.getItem('user')!); the ! will remove the safety that the program is giving us
+    const userString = localStorage.getItem('user');
+    if(!userString) return;
+    const user : User = JSON.parse(userString);
+    this.accountService.setCurrentUser(user);
   }
 
 }
